@@ -54,9 +54,17 @@ namespace Spc.Ofp.RelinkSSRS
                 select new XElement(XName.Get("QueryParameter", ReportingServicesNamespace), new XAttribute("Name", p),
                     new XElement(XName.Get("Value", ReportingServicesNamespace), String.Format("=Parameters!{0}.Value", TrimParam(p))));            
             
-            return new XElement(XName.Get("Query", ReportingServicesNamespace),
+            // Two different versions -- one for non-empty QueryParameter collection, another for empty
+            return (null != this.Parameters && this.Parameters.Count > 0) ?
+                /* Include QueryParameters element if the list exists */
+                new XElement(XName.Get("Query", ReportingServicesNamespace),
                 new XElement(XName.Get("DataSourceName", ReportingServicesNamespace), DataSource),
                 new XElement(XName.Get("QueryParameters", ReportingServicesNamespace), queryparams),
+                new XElement(XName.Get("CommandText", ReportingServicesNamespace), CommandText),
+                new XElement(XName.Get("UseGenericDesigner", DesignerNamespace), true)) :
+                /* Skip QueryParameters */
+                new XElement(XName.Get("Query", ReportingServicesNamespace),
+                new XElement(XName.Get("DataSourceName", ReportingServicesNamespace), DataSource),
                 new XElement(XName.Get("CommandText", ReportingServicesNamespace), CommandText),
                 new XElement(XName.Get("UseGenericDesigner", DesignerNamespace), true));
         }
